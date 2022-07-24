@@ -1,27 +1,20 @@
 package com.fastcampus.projectboard.domain;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 @Table(indexes = {
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
 @Entity
-public class ArticleComment {
+public class ArticleComment extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,19 +23,6 @@ public class ArticleComment {
     private Article article;
     @Column(nullable = false, length = 500)
     private String content;
-
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-    @CreatedBy
-    @Column(nullable = false, length = 100)
-    private String createdBy;
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime modifiedAt;
-    @LastModifiedBy
-    @Column(nullable = false, length = 100)
-    private String modifiedBy;
 
     private ArticleComment(Article article, String content) {
         this.article = article;
