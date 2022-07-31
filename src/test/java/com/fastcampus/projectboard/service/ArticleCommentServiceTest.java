@@ -1,7 +1,10 @@
 package com.fastcampus.projectboard.service;
 
 import com.fastcampus.projectboard.domain.Article;
+import com.fastcampus.projectboard.domain.ArticleComment;
+import com.fastcampus.projectboard.domain.UserAccount;
 import com.fastcampus.projectboard.dto.ArticleCommentDto;
+import com.fastcampus.projectboard.dto.UserAccountDto;
 import com.fastcampus.projectboard.repository.ArticleCommentRepository;
 import com.fastcampus.projectboard.repository.ArticleRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,9 +41,7 @@ class ArticleCommentServiceTest {
     void givenArticleId_whenSearchingArticleComments_thenReturnsArticleComments() {
         // Given
         Long articleId = 1L;
-        given(articleRepository.findById(articleId)).willReturn(Optional.of(
-                Article.of("title", "content", "#hashtag")
-        ));
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(createArticle()));
 
         // When
         List<ArticleCommentDto> articleComments = sut.searchArticleComment(articleId);
@@ -54,9 +56,7 @@ class ArticleCommentServiceTest {
     void givenArticleCommentInfo_whenSavingArticleComment_thenSavesArticleComment() {
         // Given
         Long articleId = 1L;
-        given(articleRepository.findById(articleId)).willReturn(Optional.of(
-                Article.of("title", "content", "#hashtag")
-        ));
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(createArticle()));
 
         // When
         List<ArticleCommentDto> articleComments = sut.searchArticleComment(articleId);
@@ -64,5 +64,59 @@ class ArticleCommentServiceTest {
         // Then
         assertThat(articleComments).isNotNull();
         then(articleRepository).should().findById(articleId);
+    }
+
+    private ArticleCommentDto createArticleCommentDto(String content) {
+        return ArticleCommentDto.of(
+                1L,
+                1L,
+                createUserAccountDto(),
+                content,
+                LocalDateTime.now(),
+                "uno",
+                LocalDateTime.now(),
+                "uno"
+        );
+    }
+
+    private UserAccountDto createUserAccountDto() {
+        return UserAccountDto.of(
+                "uno",
+                "password",
+                "uno@gmail.com",
+                "Uno",
+                "this is memo",
+                LocalDateTime.now(),
+                "uno",
+                LocalDateTime.now(),
+                "uno"
+        );
+    }
+
+    private ArticleComment createArticleComment(String content) {
+        return ArticleComment.of(
+                createArticle(),
+                createUserAccount(),
+                content
+        );
+    }
+
+    private UserAccount createUserAccount() {
+        return UserAccount.of(
+                "uno",
+                "password",
+                "uno@gmail.com",
+                "Uno",
+                null
+        );
+    }
+
+    private Article createArticle() {
+        return Article.of(
+                createUserAccount(),
+                "title",
+                "content",
+                "#java"
+        );
     }
 }
