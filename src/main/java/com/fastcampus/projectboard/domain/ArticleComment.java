@@ -1,32 +1,33 @@
 package com.fastcampus.projectboard.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
-@Setter
-@ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(callSuper = true)
 @Table(indexes = {
+        @Index(columnList = "content"),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
 @Entity
 public class ArticleComment extends AuditingFields {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    private Article article;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "userId")
-    private UserAccount userAccount;
+    @Setter @ManyToOne(optional = false) private Article article; // 게시글 (ID)
+    @Setter @ManyToOne(optional = false) @JoinColumn(name = "userId") private UserAccount userAccount; // 유저 정보 (ID)
 
-    @Column(nullable = false, length = 500)
-    private String content;
+    @Setter @Column(nullable = false, length = 500) private String content; // 본문
+
+
+    protected ArticleComment() {}
 
     private ArticleComment(Article article, UserAccount userAccount, String content) {
         this.article = article;
@@ -41,13 +42,13 @@ public class ArticleComment extends AuditingFields {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ArticleComment that = (ArticleComment) o;
-        return id != null && Objects.equals(id, that.id);
+        if (!(o instanceof ArticleComment that)) return false;
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

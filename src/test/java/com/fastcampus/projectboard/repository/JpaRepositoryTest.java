@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("JPA 연결 테스트")
 @Import(JpaConfig.class)
@@ -22,9 +22,11 @@ class JpaRepositoryTest {
     private final ArticleCommentRepository articleCommentRepository;
     private final UserAccountRepository userAccountRepository;
 
-    public JpaRepositoryTest(@Autowired ArticleRepository articleRepository,
-                             @Autowired ArticleCommentRepository articleCommentRepository,
-                             @Autowired UserAccountRepository userAccountRepository) {
+    public JpaRepositoryTest(
+            @Autowired ArticleRepository articleRepository,
+            @Autowired ArticleCommentRepository articleCommentRepository,
+            @Autowired UserAccountRepository userAccountRepository
+    ) {
         this.articleRepository = articleRepository;
         this.articleCommentRepository = articleCommentRepository;
         this.userAccountRepository = userAccountRepository;
@@ -33,11 +35,15 @@ class JpaRepositoryTest {
     @DisplayName("select 테스트")
     @Test
     void givenTestData_whenSelecting_thenWorksFine() {
+        // Given
+
+        // When
         List<Article> articles = articleRepository.findAll();
 
+        // Then
         assertThat(articles)
                 .isNotNull()
-                .hasSize(100);
+                .hasSize(123);
     }
 
     @DisplayName("insert 테스트")
@@ -52,8 +58,7 @@ class JpaRepositoryTest {
         articleRepository.save(article);
 
         // Then
-        assertThat(articleRepository.count())
-                .isEqualTo(previousCount + 1);
+        assertThat(articleRepository.count()).isEqualTo(previousCount + 1);
     }
 
     @DisplayName("update 테스트")
@@ -65,11 +70,10 @@ class JpaRepositoryTest {
         article.setHashtag(updatedHashtag);
 
         // When
-        Article savedArticle = articleRepository.save(article);
+        Article savedArticle = articleRepository.saveAndFlush(article);
 
         // Then
-        assertThat(savedArticle)
-                .hasFieldOrPropertyWithValue("hashtag", updatedHashtag);
+        assertThat(savedArticle).hasFieldOrPropertyWithValue("hashtag", updatedHashtag);
     }
 
     @DisplayName("delete 테스트")
@@ -85,9 +89,8 @@ class JpaRepositoryTest {
         articleRepository.delete(article);
 
         // Then
-        assertThat(articleRepository.count())
-                .isEqualTo(previousArticleCount - 1);
-        assertThat(articleCommentRepository.count())
-                .isEqualTo(previousArticleCommentCount - deletedCommentsSize);
+        assertThat(articleRepository.count()).isEqualTo(previousArticleCount - 1);
+        assertThat(articleCommentRepository.count()).isEqualTo(previousArticleCommentCount - deletedCommentsSize);
     }
+
 }

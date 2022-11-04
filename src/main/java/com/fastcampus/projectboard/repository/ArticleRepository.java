@@ -18,8 +18,7 @@ public interface ArticleRepository extends
         JpaRepository<Article, Long>,
         ArticleRepositoryCustom,
         QuerydslPredicateExecutor<Article>,
-        QuerydslBinderCustomizer<QArticle>
-{
+        QuerydslBinderCustomizer<QArticle> {
 
     Page<Article> findByTitleContaining(String title, Pageable pageable);
     Page<Article> findByContentContaining(String content, Pageable pageable);
@@ -34,7 +33,8 @@ public interface ArticleRepository extends
         bindings.bind(root.title).first(StringExpression::containsIgnoreCase);
         bindings.bind(root.content).first(StringExpression::containsIgnoreCase);
         bindings.bind(root.hashtag).first(StringExpression::containsIgnoreCase);
-        bindings.bind(root.createdBy).first(StringExpression::containsIgnoreCase);
         bindings.bind(root.createdAt).first(DateTimeExpression::eq);
+        bindings.bind(root.createdBy).first(StringExpression::containsIgnoreCase);
     }
+
 }
